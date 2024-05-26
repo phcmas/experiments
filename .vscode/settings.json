@@ -1,0 +1,52 @@
+{
+    "python.defaultInterpreterPath": "~/anaconda3/envs/etc/bin/python3",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.indexing": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.autoComplete.extraPaths": [
+        "~/anaconda3/envs/etc/lib/python3.10/site-packages",
+        "~/asleep/etc/feat",
+    ],
+    "python.analysis.extraPaths": [
+        "~/anaconda3/envs/etc/lib/python3.10/site-packages",
+        "~/asleep/etc/feat",
+    ],
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "sqlalchemy",
+            "depth": 3
+        },
+        {
+            "name": "fastapi",
+            "depth": 3
+        },
+        {
+            "name": "pydantic",
+            "depth": 3
+        },
+        {
+            "name": "api",
+            "depth": 15
+        },
+        {
+            "name": "batch",
+            "depth": 15
+        },
+        {
+            "name": "alembic",
+            "depth": 2
+        }
+    ],
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/.pytest_cache": true,
+        "**/__pycache__": true
+    }
+}
