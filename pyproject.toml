@@ -1,0 +1,29 @@
+[tool.ruff]
+line-length = 105
+
+
+# Specify additional options
+exclude = [".script/*", "__init__.py"]
+
+[tool.ruff.lint]
+
+# Specify the error codes to check.
+select = [
+    "E", # Errors
+    "W", # Warnings
+    "F", # Pyflakes
+    "E", # pycodestyle
+]
+# Specify the error codes to ignore.
+ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D106", # Missing docstring in public nested class
+    "D107", # Missing docstring in __init__
+    "E501", # Line too long
+    "E402", # Module level import not at top of file
+]
