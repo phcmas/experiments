@@ -1,5 +1,5 @@
 [tool.ruff]
-line-length = 105
+line-length = 120
 
 
 # Specify additional options

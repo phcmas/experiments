@@ -13,9 +13,7 @@ from config import load_environments, logger
 environments = load_environments()
 
 boto3.setup_default_session(profile_name=environments.AWS_PROFILE)
-s3_client = boto3.client(
-    "s3", region_name=environments.AWS_REGION, endpoint_url=environments.ENDPOINT_URL
-)
+s3_client = boto3.client("s3", region_name=environments.AWS_REGION, endpoint_url=environments.ENDPOINT_URL)
 
 
 def create_bucket(name: str):
@@ -25,9 +23,6 @@ def create_bucket(name: str):
         )
     except ClientError:
         logger.exception("Could not create S3 bucket locally")
-        raise
-    except Exception as error:
-        logger.error(error)
         raise
 
     return response

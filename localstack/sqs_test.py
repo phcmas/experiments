@@ -2,7 +2,8 @@ import sys
 from pathlib import Path
 
 import boto3
-from botocore.exceptions import ClientError
+import boto3.session
+import json
 
 PATH = Path(__file__).parent.resolve().parent.resolve()
 sys.path.append(str(PATH))
@@ -11,6 +12,51 @@ from config import load_environments, logger
 
 environments = load_environments()
 boto3.setup_default_session(profile_name=environments.AWS_PROFILE)
-s3_client = boto3.client(
-    "s3", region_name=environments.AWS_REGION, endpoint_url=environments.ENDPOINT_URL
+
+sqs_session = boto3.session.Session()
+sqs_client = sqs_session.client(
+    service_name="sqs",
+    region_name=environments.AWS_REGION,
+    endpoint_url=environments.ENDPOINT_URL,
 )
+
+
+def send_message(sqs_url: str, payload: dict):
+    try:
+        response = sqs_client.send_message(QueueUrl=sqs_url, MessageBody=json.dumps(payload))
+    except Exception as exc:
+        logger.exception(exc)
+        raise
+
+    return response
+
+
+def receive_message(sqs_url: str):
+    try:
+        response = sqs_client.receive_message(
+            QueueUrl=sqs_url,
+            MaxNumberOfMessages=2,
+            WaitTimeSeconds=1,
+        )
+    except Exception as exc:
+        logger.exception(exc)
+        raise
+
+    return response
+
+
+def main():
+    logger.info("sqs message sended")
+    sqs_url = environments.SQS_URL
+    payload = {"hello": 1}
+
+    send_message(sqs_url, payload)
+    send_message(sqs_url, payload)
+    send_message(sqs_url, payload)
+
+    response = receive_message(sqs_url)
+
+    logger.info(response)
+
+
+main()

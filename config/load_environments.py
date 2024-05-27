@@ -10,6 +10,7 @@ class Environments(BaseSettings):
     AWS_REGION: str
     AWS_PROFILE: str
     ENDPOINT_URL: str
+    SQS_URL: str
 
 
 def load_environments() -> Environments:
