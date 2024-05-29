@@ -1,12 +1,7 @@
 import json
-import sys
-from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError
-
-PATH = Path(__file__).parent.resolve().parent.resolve()
-sys.path.append(str(PATH))
 
 from config import load_environments, logger
 

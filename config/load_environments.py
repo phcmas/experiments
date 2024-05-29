@@ -15,7 +15,7 @@ class Environments(BaseSettings):
 
 def load_environments() -> Environments:
     profile = os.getenv("PROFILE")
-    allowed_profiles = ["live", "test", "dev"]
+    allowed_profiles = ["live", "test", "local"]
 
     if profile not in allowed_profiles:
         logger.error(f"PROFILE must one of {allowed_profiles}")

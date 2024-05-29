@@ -1,12 +1,7 @@
-import sys
-from pathlib import Path
+import json
 
 import boto3
 import boto3.session
-import json
-
-PATH = Path(__file__).parent.resolve().parent.resolve()
-sys.path.append(str(PATH))
 
 from config import load_environments, logger
 
@@ -54,6 +49,8 @@ def main():
     send_message(sqs_url, payload)
     send_message(sqs_url, payload)
 
+    response = receive_message(sqs_url)
+    response = receive_message(sqs_url)
     response = receive_message(sqs_url)
 
     logger.info(response)
