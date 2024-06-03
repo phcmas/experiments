@@ -11,9 +11,11 @@ class Environments(BaseSettings):
     AWS_PROFILE: str
     ENDPOINT_URL: str
     SQS_URL: str
+    UPLOAD_API_BASE_URL: str
+    MEL_FILE_DIR: str
 
 
-def load_environments() -> Environments:
+def load_settings() -> Environments:
     profile = os.getenv("PROFILE")
     allowed_profiles = ["live", "test", "local"]
 

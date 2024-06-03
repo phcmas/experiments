@@ -3,16 +3,16 @@ import json
 import boto3
 import boto3.session
 
-from config import load_environments, logger
+from config import load_settings, logger
 
-environments = load_environments()
-boto3.setup_default_session(profile_name=environments.AWS_PROFILE)
+settings = load_settings()
+boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
 
 sqs_session = boto3.session.Session()
 sqs_client = sqs_session.client(
     service_name="sqs",
-    region_name=environments.AWS_REGION,
-    endpoint_url=environments.ENDPOINT_URL,
+    region_name=settings.AWS_REGION,
+    endpoint_url=settings.ENDPOINT_URL,
 )
 
 
@@ -42,7 +42,7 @@ def receive_message(sqs_url: str):
 
 def main():
     logger.info("sqs message sended")
-    sqs_url = environments.SQS_URL
+    sqs_url = settings.SQS_URL
     payload = {"hello": 1}
 
     send_message(sqs_url, payload)
