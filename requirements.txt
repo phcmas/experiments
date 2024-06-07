@@ -9,3 +9,5 @@ mlflow-skinny==2.9.2
 numpy==1.23.3
 pandas==2.0.1
 onnxruntime==1.17.3
+polars==0.20.31
+polars-lts-cpu==0.20.31
