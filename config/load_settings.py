@@ -13,6 +13,9 @@ class Environments(BaseSettings):
     SQS_URL: str
     UPLOAD_API_BASE_URL: str
     MEL_FILE_DIR: str
+    AI_MODEL_DIR: str
+    DATADOG_API_KEY: str
+    DATADOG_APP_KEY: str
 
 
 def load_settings() -> Environments:
