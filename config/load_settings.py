@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from dotenv import dotenv_values
 from pydantic_settings import BaseSettings
@@ -9,13 +10,13 @@ from config.config_logging import logger
 class Environments(BaseSettings):
     AWS_REGION: str
     AWS_PROFILE: str
-    ENDPOINT_URL: str
-    SQS_URL: str
-    UPLOAD_API_BASE_URL: str
-    MEL_FILE_DIR: str
-    AI_MODEL_DIR: str
-    DATADOG_API_KEY: str
-    DATADOG_APP_KEY: str
+    ENDPOINT_URL: Optional[str] = None
+    SQS_URL: Optional[str]
+    UPLOAD_API_BASE_URL: Optional[str]
+    MEL_FILE_DIR: Optional[str]
+    AI_MODEL_DIR: Optional[str]
+    DATADOG_API_KEY: Optional[str]
+    DATADOG_APP_KEY: Optional[str]
 
 
 def load_settings() -> Environments:

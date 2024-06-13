@@ -1,6 +1,5 @@
 from config import load_settings, logger
 import requests
-import numpy
 
 
 settings = load_settings()
@@ -58,11 +57,6 @@ def upload_mel_file_v1(start_seq: int, end_seq: int, session_id: str):
             )
 
             logger.info(upload_file_response)
-
-
-class Test:
-    a: int
-    b: int
 
 
 def main():

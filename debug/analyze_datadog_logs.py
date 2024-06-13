@@ -23,7 +23,7 @@ def load_logs_from_file(fileName: str):
 
 
 def main():
-    fileName0 = "2024-06-06.pkl"
+    fileName0 = "2024-06-13.pkl"
     logs0 = load_logs_from_file(fileName0)
     frame0 = pl.DataFrame(logs0, schema={"function": pl.String, "file": pl.String, "duration": pl.Float32})
 
@@ -40,7 +40,7 @@ def main():
         .sort("file")
     )
 
-    result0.write_excel("2024-06-06.xlsx")
+    result0.write_excel("2024-06-13.xlsx")
 
 
 main()
