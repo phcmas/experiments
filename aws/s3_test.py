@@ -1,9 +1,7 @@
-from datetime import datetime, timezone
+import time
 from multiprocessing.pool import ThreadPool
-import operator
-from tempfile import NamedTemporaryFile
-import tempfile
-from typing import List
+from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
+from typing import List, Tuple
 
 import boto3
 from botocore.exceptions import ClientError
@@ -14,7 +12,7 @@ settings = load_settings()
 
 boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
 s3_client = boto3.client("s3", region_name=settings.AWS_REGION, endpoint_url=settings.ENDPOINT_URL)
-files = [
+keys = [
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/530_mel",
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/531_mel",
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/532_mel",
@@ -54,6 +52,48 @@ files = [
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/568_mel",
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/569_mel",
 ]
+keys = [
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2160_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2161_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2162_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2163_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2164_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2165_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2166_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2167_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2168_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2169_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2170_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2171_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2172_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2173_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2174_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2175_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2176_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2177_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2178_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2179_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2180_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2181_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2182_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2183_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2184_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2185_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2186_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2187_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2188_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2189_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2190_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2191_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2192_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2193_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2194_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2195_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2196_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2197_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2198_mel",
+    "G-20240612145829-AJIWZtWSKUwQMbSpmBOZ/20240612145838_y16v6/2199_mel",
+]
 
 
 def create_bucket(name: str):
@@ -68,31 +108,41 @@ def create_bucket(name: str):
     return response
 
 
-def download_file(bucket: str, key: str, temp_file: NamedTemporaryFile):
-    s3_client.download_file(bucket, key, temp_file.name)
-    return temp_file
+def download_file(parameter: Tuple) -> _TemporaryFileWrapper:
+    try:
+        s3_client.download_file(parameter[0], parameter[1], parameter[2].name)
+        logger.info(f"download completed: {parameter[1]}")
+    except Exception as exc:
+        logger.error(exc)
+
+    return parameter[2]
 
 
-def download_files(self, buckets: str, file_paths: List[str]) -> List[NamedTemporaryFile]:
+def download_files(bucket: str, keys: List[str]) -> List[NamedTemporaryFile]:
     pool = ThreadPool(4)
-    result_list = pool.map_async(download_file, buckets)
+    parameters = [(bucket, key, NamedTemporaryFile()) for key in keys]
+
+    result_list = pool.map_async(download_file, parameters)
     result_list.wait()
 
-    return [item[0] for item in sorted([value for value in result_list.get()], key=operator.itemgetter(1))]
+    return result_list.get()
 
 
 def main():
     bucket = "sleep-sessions-data-live"
-    key = "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/569_mel"
-    temp_file = NamedTemporaryFile()
+    # process = psutil.Process(os.getpid())
+    # process.cpu_affinity([0, 1])
+    download_files(bucket, keys[0:1])
 
-    result = download_file(bucket, key, temp_file)
+    start1 = time.perf_counter()
+    result1 = download_files(bucket, keys[0:10])
+    end1 = time.perf_counter()
+    logger.info(f"count: {len(result1)}, duration: {round(end1-start1,3)}")
 
-    logger.info(result)
-
-    # logger.info("Creating S3 bucket locally using localstack")
-    # logger.info("S3 bucket create")
-    # logger.info(json.dumps(s3, indent=4) + "\n")
+    start1 = time.perf_counter()
+    result0 = download_files(bucket, keys)
+    end1 = time.perf_counter()
+    logger.info(f"count: {len(result0)}, duration: {round(end1-start1,3)}")
 
 
 main()
