@@ -1,9 +1,13 @@
+import os
 import time
 from multiprocessing.pool import ThreadPool
 from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 from typing import List, Tuple
 
+import psutil
+
 import boto3
+from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 
 from config import load_settings, logger
@@ -110,7 +114,12 @@ def create_bucket(name: str):
 
 def download_file(parameter: Tuple) -> _TemporaryFileWrapper:
     try:
-        s3_client.download_file(parameter[0], parameter[1], parameter[2].name)
+        s3_client.download_file(
+            parameter[0],
+            parameter[1],
+            parameter[2].name,
+            Config=TransferConfig(preferred_transfer_client="classic"),
+        )
         logger.info(f"download completed: {parameter[1]}")
     except Exception as exc:
         logger.error(exc)
@@ -132,17 +141,25 @@ def main():
     bucket = "sleep-sessions-data-live"
     # process = psutil.Process(os.getpid())
     # process.cpu_affinity([0, 1])
+
     download_files(bucket, keys[0:1])
 
-    start1 = time.perf_counter()
-    result1 = download_files(bucket, keys[0:10])
-    end1 = time.perf_counter()
-    logger.info(f"count: {len(result1)}, duration: {round(end1-start1,3)}")
+    # start1 = time.perf_counter()
+    # result1 = download_files(bucket, keys[0:10])
+    # end1 = time.perf_counter()
+    # logger.info(f"count: {len(result1)}, duration: {round(end1-start1,3)}")
 
-    start1 = time.perf_counter()
-    result0 = download_files(bucket, keys)
-    end1 = time.perf_counter()
-    logger.info(f"count: {len(result0)}, duration: {round(end1-start1,3)}")
+    sum = 0
+
+    for i in range(20):
+        start1 = time.perf_counter()
+        result0 = download_files(bucket, keys)
+        end1 = time.perf_counter()
+
+        sum += round(end1 - start1, 3)
+        logger.info(f"count: {len(result0)}, duration: {round(end1-start1,3)}")
+
+    logger.info(sum / 20)
 
 
 main()
