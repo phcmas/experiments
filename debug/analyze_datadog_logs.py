@@ -22,12 +22,11 @@ def load_logs_from_file(fileName: str):
     }
 
 
-def main():
-    fileName0 = "2024-06-13.pkl"
-    logs0 = load_logs_from_file(fileName0)
+def analyze_logs(fileName: str):
+    logs0 = load_logs_from_file(fileName)
     frame0 = pl.DataFrame(logs0, schema={"function": pl.String, "file": pl.String, "duration": pl.Float32})
 
-    result0 = (
+    statistics = (
         frame0.group_by("function", "file")
         .agg(
             pl.count("function").alias("call_count"),
@@ -37,10 +36,25 @@ def main():
             pl.col("duration").min().alias("min_duration"),
             pl.col("duration").std().alias("std_duration"),
         )
-        .sort("file")
+        .sort("function", "file")
     )
 
+    logger.info(f"{fileName} has {len(frame0)} records")
+
+    return statistics
+
+
+def main():
+    result0 = analyze_logs("2024-06-13.pkl")
+    result1 = analyze_logs("2024-06-14.pkl")
+
+    numeric0 = result0.drop("function").drop("file")
+    numeric1 = result1.drop("function").drop("file")
+
+    difference = numeric0.with_columns([pl.col(c) - numeric1[c] for c in numeric0.columns])
+
     result0.write_excel("2024-06-13.xlsx")
+    result1.write_excel("2024-06-14.xlsx")
 
 
 main()
