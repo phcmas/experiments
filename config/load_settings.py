@@ -17,6 +17,8 @@ class Environments(BaseSettings):
     AI_MODEL_DIR: Optional[str]
     DATADOG_API_KEY: Optional[str]
     DATADOG_APP_KEY: Optional[str]
+    REDIS_HOST: Optional[str]
+    REDIS_PORT: Optional[int]
 
 
 def load_settings() -> Environments:
