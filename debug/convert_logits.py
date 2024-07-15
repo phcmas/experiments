@@ -1,4 +1,3 @@
-import string
 import time
 import numpy as np
 
@@ -94,6 +93,12 @@ def measure_the_time_of_conversion(hour: int):
 def main():
     measure_the_size_for_logits(10)
     measure_the_time_of_conversion(10)
+
+    measure_the_size_for_logits(24)
+    measure_the_time_of_conversion(24)
+
+    measure_the_size_for_logits(48)
+    measure_the_time_of_conversion(48)
 
 
 main()
