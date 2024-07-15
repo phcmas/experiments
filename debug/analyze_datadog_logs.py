@@ -45,16 +45,16 @@ def analyze_logs(fileName: str):
 
 
 def main():
-    result0 = analyze_logs("2024-06-13.pkl")
-    result1 = analyze_logs("2024-06-14.pkl")
+    result0 = analyze_logs("2024-06-28.pkl")
+    # result1 = analyze_logs("2024-06-14.pkl")
 
-    numeric0 = result0.drop("function").drop("file")
-    numeric1 = result1.drop("function").drop("file")
+    # numeric0 = result0.drop("function").drop("file")
+    # numeric1 = result1.drop("function").drop("file")
 
-    difference = numeric0.with_columns([pl.col(c) - numeric1[c] for c in numeric0.columns])
+    # difference = numeric0.with_columns([pl.col(c) - numeric1[c] for c in numeric0.columns])
 
-    result0.write_excel("2024-06-13.xlsx")
-    result1.write_excel("2024-06-14.xlsx")
+    result0.write_excel("2024-06-28.xlsx")
+    # result1.write_excel("2024-06-14.xlsx")
 
 
 main()

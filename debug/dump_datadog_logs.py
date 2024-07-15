@@ -68,19 +68,10 @@ def write_file(started_at: datetime, result: List[dict]):
 
 
 def main():
-    started_at0 = get_datetime(2024, 6, 14, 5, 0, 0)
-    ended_at0 = get_datetime(2024, 6, 14, 8, 0, 0)
+    started_at0 = get_datetime(2024, 6, 28, 5, 0, 0)
+    ended_at0 = get_datetime(2024, 6, 28, 8, 0, 0)
     result0 = get_datadog_logs(started_at0, ended_at0)
     write_file(started_at0, result0)
-
-    # started_at1 = get_datetime(2024, 6, 7, 5, 0, 0)
-    # ended_at1 = get_datetime(2024, 6, 7, 8, 0, 0)
-    # result1 = get_datadog_logs(started_at1, ended_at1)
-
-    # result = result0
-    # write_file(started_at0, result)
-
-    print("Done!")
 
 
 main()
