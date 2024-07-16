@@ -24,7 +24,7 @@ def generate_one_logit(type_count: int, decimal_point: int):
     return excluding_last + [last]
 
 
-def generate_logits(type_count: int, stage_count: int, decimal_point: int = -1):
+def generate_logits(type_count: int, stage_count: int, decimal_point: int = -1) -> np.ndarray:
     if decimal_point == -1:
         return np.random.rand(stage_count, type_count).astype(np.float32)
     else:
@@ -157,6 +157,32 @@ def main2():
     print(f"total: {len(snoring_logits_utf8) + len(osa_logits_utf8) + len(snoring_logits_utf8)}")
 
 
+def main3():
+    sleep_stage_logits = generate_logits(4, 1200)
+    osa_stage_logits = generate_logits(3, 1200)
+    snoring_stage_logits = generate_logits(2, 1200)
+
+    with open("sleep_stage_logits", "wb") as file:
+        np.save(file, sleep_stage_logits)
+
+    with open("osa_stage_logits", "wb") as file:
+        np.save(file, osa_stage_logits)
+
+    with open("snoring_stage_logits", "wb") as file:
+        np.save(file, snoring_stage_logits)
+
+    with open("sleep_stage_logits", "rb") as file:
+        sleep_stage_logits_from_file = np.load(file)
+
+    with open("osa_stage_logits", "rb") as file:
+        osa_stage_logits_from_file = np.load(file)
+
+    with open("snoring_stage_logits", "rb") as file:
+        snoring_stage_logits_from_file = np.load(file)
+
+    print(sleep_stage_logits_from_file)
+
+
 def main():
     measure_the_size_for_logits(10)
     measure_the_time_of_conversion(10)
@@ -169,4 +195,5 @@ def main():
 
 
 # main()
-main2()
+# main2()
+main3()
