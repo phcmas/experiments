@@ -24,8 +24,11 @@ def generate_one_logit(type_count: int, decimal_point: int):
     return excluding_last + [last]
 
 
-def generate_logits(type_count: int, stage_count: int, decimal_point: int = 3):
-    return np.random.rand(stage_count, type_count).astype(np.float32)
+def generate_logits(type_count: int, stage_count: int, decimal_point: int = -1):
+    if decimal_point == -1:
+        return np.random.rand(stage_count, type_count).astype(np.float32)
+    else:
+        return np.round(np.random.rand(stage_count, type_count).astype(np.float32), decimal_point)
 
 
 @timeit
@@ -124,9 +127,9 @@ def base64_to_array_2d(base64_string, num_rows, num_cols):
 
 
 def main2():
-    sleep_logits = np.random.rand(1200, 4).astype(np.float32)
-    osa_logits = np.random.rand(1200, 3).astype(np.float32)
-    snoring_logits = np.random.rand(1200, 2).astype(np.float32)
+    sleep_logits = generate_logits(4, 1200)
+    osa_logits = generate_logits(3, 1200)
+    snoring_logits = generate_logits(2, 1200)
 
     # Encode the list of floats to Base64
     sleep_logits_base64 = array_to_base64_2d(sleep_logits)
@@ -155,36 +158,14 @@ def main2():
 
 
 def main():
-    # measure_the_size_for_logits(10)
-    # measure_the_time_of_conversion(10)
+    measure_the_size_for_logits(10)
+    measure_the_time_of_conversion(10)
 
-    # measure_the_size_for_logits(24)
-    # measure_the_time_of_conversion(24)
+    measure_the_size_for_logits(24)
+    measure_the_time_of_conversion(24)
 
-    # measure_the_size_for_logits(48)
-    # measure_the_time_of_conversion(48)
-
-    # 바이너리 데이터 예제
-    test0 = generate_logits(4, 1200, 3)
-    list_as_str0 = "[" + ",".join(map(str, test0)) + "]"
-    binary_data = list_as_str0.encode("utf-8")
-    encoded_data = base64.b64encode(binary_data).decode("utf-8")
-
-    print(len(binary_data))
-    print(len(encoded_data))
-
-    # 바이너리 데이터 예제
-    test = generate_logits(4, 1200, 6)
-    list_as_str = "[" + ",".join(map(str, test)) + "]"
-    binary_data = list_as_str.encode("utf-8")
-    encoded_data = base64.b64encode(binary_data).decode("utf-8")
-
-    print(len(binary_data))
-    print(len(encoded_data))
-
-    # decoded_data = base64.b64decode(encoded_data0.encode("utf-8"))
-
-    # print(decoded_data)
+    measure_the_size_for_logits(48)
+    measure_the_time_of_conversion(48)
 
 
 # main()
