@@ -11,7 +11,6 @@ class InputPayloadEncoded(BaseModel):
     session_id: str
     db_type: str = "MAIN"
 
-    logits_length: int
     sleep_stage_logits: str
     osa_logits: str
     snoring_logits: str
@@ -189,7 +188,6 @@ def create_input_payload():
     return InputPayloadEncoded(
         session_id="20240715164914_uw0jy",
         db_type="MAIN",
-        logits_length=len(sleep_logits),
         sleep_stage_logits=sleep_logits_base64,
         osa_logits=osa_logits_base64,
         snoring_logits=snoring_logits_base64,
