@@ -2,6 +2,21 @@ import base64
 import time
 import numpy as np
 import struct
+from pydantic import BaseModel, ConfigDict
+
+
+class InputPayload(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    session_id: str
+    db_type: str = "MAIN"
+
+    sleep_stage_logits: np.ndarray
+    osa_logits: np.ndarray
+    snoring_logits: np.ndarray
+
+    callback_url: str = "http://test-api.asleep.ai/data"
+    callback_version: str = "V2"
 
 
 def timeit(func):
