@@ -15,15 +15,6 @@ def timeit(func):
     return wrapper
 
 
-def generate_one_logit(type_count: int, decimal_point: int):
-    alpha = np.ones(type_count)
-    # excluding_last = np.round(np.random.dirichlet(alpha), decimal_point).tolist()[:-1]
-    excluding_last = np.random.dirichlet(alpha).tolist()[:-1]
-    last = max(round(1 - sum(excluding_last), decimal_point), 0)
-
-    return excluding_last + [last]
-
-
 def generate_logits(type_count: int, stage_count: int, decimal_point: int = -1) -> np.ndarray:
     if decimal_point == -1:
         return np.random.rand(stage_count, type_count).astype(np.float32)
@@ -126,7 +117,7 @@ def base64_to_array_2d(base64_string, num_rows, num_cols):
     return [floats[i * num_cols : (i + 1) * num_cols] for i in range(num_rows)]
 
 
-def main2():
+def encode_and_decode_logits_base64():
     sleep_logits = generate_logits(4, 1200)
     osa_logits = generate_logits(3, 1200)
     snoring_logits = generate_logits(2, 1200)
@@ -146,18 +137,12 @@ def main2():
     osa_logits_decoded = base64_to_array_2d(osa_logits_base64, num_rows=1200, num_cols=3)
     snoring_logits_decoded = base64_to_array_2d(snoring_logits_base64, num_rows=1200, num_cols=2)
 
-    # Encode the list of floats to utf8
-    sleep_logits_utf8 = array_to_utf8_2d(sleep_logits)
-    osa_logits_utf8 = array_to_utf8_2d(osa_logits)
-    snoring_logits_utf8 = array_to_utf8_2d(snoring_logits)
-
-    print(f"sleep logits utf8: {len(sleep_logits_utf8)}")
-    print(f"osa logits utf8: {len(osa_logits_utf8)}")
-    print(f"snoring logits utf8: {len(snoring_logits_utf8)}")
-    print(f"total: {len(snoring_logits_utf8) + len(osa_logits_utf8) + len(snoring_logits_utf8)}")
+    print(f"sleep logits decoded: {sleep_logits_decoded}")
+    print(f"osa logits decoded: {osa_logits_decoded}")
+    print(f"snoring logits decoded: {snoring_logits_decoded}")
 
 
-def main3():
+def save_and_load_binary():
     sleep_stage_logits = generate_logits(4, 1200)
     osa_stage_logits = generate_logits(3, 1200)
     snoring_stage_logits = generate_logits(2, 1200)
@@ -181,19 +166,21 @@ def main3():
         snoring_stage_logits_from_file = np.load(file)
 
     print(sleep_stage_logits_from_file)
+    print(osa_stage_logits_from_file)
+    print(snoring_stage_logits_from_file)
 
 
 def main():
-    measure_the_size_for_logits(10)
-    measure_the_time_of_conversion(10)
+    # measure_the_size_for_logits(10)
+    # measure_the_time_of_conversion(10)
 
-    measure_the_size_for_logits(24)
-    measure_the_time_of_conversion(24)
+    # measure_the_size_for_logits(24)
+    # measure_the_time_of_conversion(24)
 
-    measure_the_size_for_logits(48)
-    measure_the_time_of_conversion(48)
+    # measure_the_size_for_logits(48)
+    # measure_the_time_of_conversion(48)
+
+    save_and_load_binary()
 
 
-# main()
-# main2()
-main3()
+main()
