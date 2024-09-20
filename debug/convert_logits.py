@@ -199,9 +199,9 @@ def create_input_payload():
 
 
 def save_and_load_binary():
-    sleep_stage_logits = generate_logits(4, 1200)
-    osa_stage_logits = generate_logits(3, 1200)
-    snoring_stage_logits = generate_logits(2, 1200)
+    sleep_stage_logits = generate_logits(4, 0)
+    osa_stage_logits = generate_logits(3, 0)
+    snoring_stage_logits = generate_logits(2, 0)
 
     with open("sleep_stage_logits", "wb") as file:
         np.save(file, sleep_stage_logits)
@@ -227,6 +227,7 @@ def save_and_load_binary():
 
 
 def main():
+    save_and_load_binary()
     # measure_the_size_for_logits(10)
     # measure_the_time_of_conversion(10)
 
