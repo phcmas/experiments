@@ -11,3 +11,4 @@ onnxruntime==1.17.3
 polars==0.20.31
 polars-lts-cpu==0.20.31
 xlsxwriter==3.2.0
+pyattest==0.0.13
