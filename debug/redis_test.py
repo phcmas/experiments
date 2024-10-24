@@ -1,8 +1,9 @@
-from charset_normalizer import from_bytes
-from config import load_settings, logger
-from redis import Redis
+from config import load_env, logger
 
-settings = load_settings()
+# noqa
+from redis import Redis  # type: ignore
+
+settings = load_env()
 redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 

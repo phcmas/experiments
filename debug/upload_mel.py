@@ -1,8 +1,8 @@
-from config import load_settings, logger
+from config import load_env, logger
 import requests
 
 
-settings = load_settings()
+settings = load_env()
 
 
 def upload_mel_file_v2(start_seq: int, end_seq: int, session_id: str):

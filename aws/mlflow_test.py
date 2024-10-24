@@ -1,7 +1,7 @@
 import mlflow
-from config import load_settings, logger
+from config import load_env, logger
 
-settings = load_settings()
+settings = load_env()
 
 
 def load_ai_model(model_path: str):

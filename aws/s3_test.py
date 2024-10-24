@@ -1,18 +1,16 @@
-import os
 import time
 from multiprocessing.pool import ThreadPool
 from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 from typing import List, Tuple
 
-import psutil
 
 import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 
-from config import load_settings, logger
+from config import load_env, logger
 
-settings = load_settings()
+settings = load_env()
 
 boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
 s3_client = boto3.client("s3", region_name=settings.AWS_REGION, endpoint_url=settings.ENDPOINT_URL)

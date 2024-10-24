@@ -3,9 +3,9 @@ import json
 import boto3
 import boto3.session
 
-from config import load_settings, logger
+from config import load_env, logger
 
-settings = load_settings()
+settings = load_env()
 boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
 
 sqs_session = boto3.session.Session()

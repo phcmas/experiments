@@ -21,7 +21,7 @@ class Environments(BaseSettings):
     REDIS_PORT: Optional[int]
 
 
-def load_settings() -> Environments:
+def load_env() -> Environments:
     profile = os.getenv("PROFILE")
     allowed_profiles = ["live", "test", "local"]
 
