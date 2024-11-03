@@ -1,29 +1,28 @@
 import mlflow
-from config import load_env, logger
-
-settings = load_env()
+import numpy as np
 
 
-def load_ai_model(model_path: str):
-    try:
-        ai_model = mlflow.pyfunc.load_model(model_path)
-    except Exception as exc:
-        logger.exception(exc)
-        raise
+def prediction_test(model_path: str):
+    feat_vecs = [np.random.rand(1, i * 10, 6, 192).astype(np.float32) for i in range(1, 9)]
+    model = mlflow.pyfunc.load_model(model_path)
 
-    return ai_model
+    for i, feat_vec in enumerate(feat_vecs):
+        try:
+            result = model.predict({"feature_vector": feat_vec})
+            print(f"Prediction of shape (1, {i * 10}, 6, 192) succeeded, length: {len(result)}")
+        except Exception:
+            print(f"Prediction of shape (1, {i * 10}, 6, 192) failed")
 
 
 def main():
-    logger.info("sqs message sended")
-    model_path0 = "s3://sleep-models-test/feature_extractor/highball/v0.1.0/mlflow"
-    model_path1 = "/home/oem/asleep/ai-model/feature_extractor/highball/v0.1.0/mlflow"
+    model_path0 = "s3://sleep-models-test/classifier/highball/v0.1.0/mlflow"
+    model_path1 = "s3://sleep-models-test/classifier/highball/v0.2.0/mlflow"
 
-    model0 = load_ai_model(model_path0)
-    model1 = load_ai_model(model_path1)
+    # test for highbal v0.1.0
+    prediction_test(model_path0)
 
-    print(model0)
-    print(model1)
+    # test for highbal v0.2.0
+    prediction_test(model_path1)
 
 
 main()
