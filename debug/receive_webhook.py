@@ -16,5 +16,3 @@ def receive_webhook(request: dict):
 
     with open(file_path, "a") as f:
         f.write(str(request) + "\n")
-
-    return "success"
