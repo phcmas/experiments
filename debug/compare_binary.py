@@ -66,3 +66,25 @@ print(f"type: {type(arr)}")
 end = time.perf_counter()
 
 print(f"duration: {end - start}")
+
+
+logits0 = [0.971, 0.028, 0.001, 0.001]
+logits1 = [0.971, 0.028, 0.001]
+logits2 = [0.971, 0.028]
+
+
+print(str(logits0))
+print(len(str(logits0)))
+
+print(str(logits1))
+print(len(str(logits1)))
+
+print(str(logits2))
+print(len(str(logits2)))
+
+# sleep_stage_logits: 2280 -> 1323
+# osa_logits: 1680 -> 1003
+# snoring_logits: 1120 -> 683
+# total:5080 -> 3009
+
+# 2071
