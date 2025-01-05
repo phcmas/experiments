@@ -6,9 +6,9 @@ from typing import List
 import pytz
 import requests
 
-from config import load_env, logger
+from config import load_environments, logger
 
-settings = load_env()
+settings = load_environments()
 
 
 def extract_year_month_day(date: datetime):

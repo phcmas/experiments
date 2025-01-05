@@ -1,7 +1,7 @@
 import pickle
 import polars as pl
 
-from config.config_logging import logger
+from config.logging_config import logger
 
 
 def extract_float(value):

@@ -1,9 +1,9 @@
-from config import load_env, logger
+from config import load_environments, logger
 
 # noqa
 from redis import Redis  # type: ignore
 
-settings = load_env()
+settings = load_environments()
 redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 

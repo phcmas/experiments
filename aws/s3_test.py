@@ -8,9 +8,9 @@ import boto3
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError
 
-from config import load_env, logger
+from config import load_environments, logger
 
-settings = load_env()
+settings = load_environments()
 
 boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
 s3_client = boto3.client("s3", region_name=settings.AWS_REGION, endpoint_url=settings.ENDPOINT_URL)

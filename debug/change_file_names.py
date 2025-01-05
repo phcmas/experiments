@@ -1,7 +1,7 @@
 import os
-from config import load_env, logger
+from config import load_environments, logger
 
-env = load_env()
+env = load_environments()
 
 
 def change_file_names():

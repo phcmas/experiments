@@ -4,10 +4,15 @@ from typing import Optional
 from dotenv import dotenv_values
 from pydantic_settings import BaseSettings
 
-from config.config_logging import logger
+from config.logging_config import logger
+
+env = None
 
 
 class Environments(BaseSettings):
+    class Config:
+        extra = "ignore"
+
     AWS_REGION: str
     AWS_PROFILE: str
     ENDPOINT_URL: Optional[str] = None
@@ -19,9 +24,17 @@ class Environments(BaseSettings):
     DATADOG_APP_KEY: Optional[str]
     REDIS_HOST: Optional[str]
     REDIS_PORT: Optional[int]
+    RDS_HOST: Optional[str]
+    RDS_PORT: Optional[int]
+    RDS_USERNAME: Optional[str]
+    RDS_PASSWORD: Optional[str]
 
 
-def load_env() -> Environments:
+def load_environments() -> Environments:
+    global env
+    if env is not None:
+        return
+
     profile = os.getenv("PROFILE")
     allowed_profiles = ["live", "test", "local"]
 
@@ -34,4 +47,9 @@ def load_env() -> Environments:
     dotenv_path = os.path.abspath(outward_once)
     values = dotenv_values(f"{dotenv_path}/.env.{profile}")
 
-    return Environments(**values)
+    env = Environments(**values)
+
+
+def get_environments() -> Environments:
+    global env
+    return env
