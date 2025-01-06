@@ -105,7 +105,7 @@ def convert_for_db_insertion(input_data: dict) -> list[tuple]:
 
 def save_model_prediction_by_page(conn: pymysql.connect, data: list):
     query = """
-    INSERT IGNORE INTO model_prediction (session_id, prediction_seq, start_mel_seq, end_mel_seq, sleep_stages, sleep_stage_logits, osas, osa_logits, snorings, snoring_logits)
+    REPLACE INTO model_prediction (session_id, prediction_seq, start_mel_seq, end_mel_seq, sleep_stages, sleep_stage_logits, osas, osa_logits, snorings, snoring_logits)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
 
