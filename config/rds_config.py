@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 connection, test_connection = None, None
 
 
-def create_connections():
+def create_rds_connections():
     env = get_environments()
 
     try:
@@ -31,12 +31,12 @@ def create_connections():
         raise e
 
 
-def get_connections():
+def get_rds_connections():
     global connection, test_connection
     return connection, test_connection
 
 
-def close_connection():
+def close_rds_connections():
     if "connection" in locals() and connection.open:
         connection.close()
 

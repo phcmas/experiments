@@ -10,7 +10,7 @@ import pymysql
 from pymysql.cursors import DictCursor
 
 from config.env_config import load_environments
-from config.rds_config import create_connections, get_connections
+from config.rds_config import create_rds_connections, get_rds_connections
 
 logger = logging.getLogger(__name__)
 
@@ -141,9 +141,9 @@ def migrate_preds(conn: pymysql.connect, type: str):
 
 def main():
     load_environments()
-    create_connections()
+    create_rds_connections()
 
-    conn, test_conn = get_connections()
+    conn, test_conn = get_rds_connections()
 
     migrate_preds(test_conn, "sleep_test")
     migrate_preds(conn, "sleep")

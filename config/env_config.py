@@ -24,6 +24,7 @@ class Environments(BaseSettings):
     DATADOG_APP_KEY: Optional[str]
     REDIS_HOST: Optional[str]
     REDIS_PORT: Optional[int]
+    REDIS_MAX_CONNECTION_POOL_SIZE: Optional[int]
     RDS_HOST: Optional[str]
     RDS_PORT: Optional[int]
     RDS_USERNAME: Optional[str]
