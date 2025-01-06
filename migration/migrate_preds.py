@@ -1,7 +1,8 @@
 import json
 import logging
+import time
+from math import ceil
 
-from alembic.op import f
 import msgpack
 import msgpack_numpy as m
 import numpy as np
@@ -13,13 +14,12 @@ from config.rds_config import create_connections, get_connections
 
 logger = logging.getLogger(__name__)
 
-# restored = msgpack.unpackb(bytes, object_hook=m.decode)
 
-
-def fetch_input_data_by_page(conn: pymysql.connect, limit: int, offset: int):
+def fetch_input_data_by_page(conn: pymysql.connect, limit: int, offset: int) -> list[dict]:
     try:
         query = f"""
-        SELECT ss.session_id, ss.model_name, ppid.start_seq_num, ppid.sleep_stages, ppid.sleep_stage_logits,
+        SELECT ss.session_id, ss.model_name, ss.stride,
+               ppid.start_seq_num, ppid.sleep_stages, ppid.sleep_stage_logits,
                oppid.osas, oppid.osa_logits, sppid.snorings, sppid.snoring_logits
           FROM sleep_session ss
          INNER JOIN post_processing_input_data ppid on ss.session_id = ppid.session_id
@@ -38,6 +38,7 @@ def fetch_input_data_by_page(conn: pymysql.connect, limit: int, offset: int):
             {
                 "session_id": row["session_id"],
                 "model_name": row["model_name"],
+                "stride": row["stride"],
                 "start_seq_num": row["start_seq_num"],
                 "sleep_stages": json.loads(row["sleep_stages"]),
                 "sleep_stage_logits": json.loads(row["sleep_stage_logits"]),
@@ -53,7 +54,7 @@ def fetch_input_data_by_page(conn: pymysql.connect, limit: int, offset: int):
         raise e
 
 
-def fetch_input_data(conn: pymysql.connect):
+def fetch_input_data(conn: pymysql.connect) -> list[dict]:
     rows, limit, offset = [], 10000, 0
     rows_by_page = fetch_input_data_by_page(conn, limit, offset)
     rows.extend(rows_by_page)
@@ -62,6 +63,7 @@ def fetch_input_data(conn: pymysql.connect):
         offset += limit
         rows_by_page = fetch_input_data_by_page(conn, limit, offset)
         rows.extend(rows_by_page)
+        time.sleep(1)
 
     return rows
 
@@ -74,14 +76,19 @@ def bin_to_arr(bin):
     return msgpack.unpackb(bin, object_hook=m.decode)
 
 
-def convert_for_db_insertion(input_data: dict):
+def convert_for_db_insertion(input_data: dict) -> list[tuple]:
     def get_end_mel_seq(start_mel_seq: int, model_name: str, sleep_stages: list):
-        return min(start_mel_seq + 79, len(sleep_stages) - 1) if model_name == "highball" else start_mel_seq + 39
+        if model_name == "highball" and len(sleep_stages) < 80:
+            return len(sleep_stages) - 1
+        elif model_name == "highball" and len(sleep_stages) >= 80:
+            return start_mel_seq + 79
+        else:
+            return start_mel_seq + 39
 
     return [
         (
             datum["session_id"],
-            datum["start_seq_num"],
+            ceil((datum["start_seq_num"] * 10) / (datum["stride"] // 30)),
             datum["start_seq_num"] * 10,
             get_end_mel_seq(datum["start_seq_num"] * 10, datum["model_name"], datum["sleep_stages"]),
             list_to_bin(datum["sleep_stages"], np.uint8),
@@ -120,34 +127,13 @@ def save_model_prediction(conn: pymysql.connect, data: list[tuple]):
     logger.info("model predictions has been saved")
 
 
-def fetch_model_prediction(conn: pymysql.connect):
-    query = "SELECT * FROM model_prediction WHERE session_id = '20250105114803_3w32g'"
-
-    with conn.cursor(DictCursor) as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-
-    for row in rows:
-        logger.info(f"session_id:  {row['session_id']}")
-        logger.info(f"prediction_seq: {row['prediction_seq']}")
-        logger.info(f"start_mel_seq: {row['start_mel_seq']}")
-        logger.info(f"end_mel_seq: {row['end_mel_seq']}")
-        logger.info(f"sleep_stages: {bin_to_arr(row['sleep_stages'])}")
-        logger.info(f"sleep_stage_logits: {bin_to_arr(row['sleep_stage_logits'])}")
-        logger.info(f"osas: {bin_to_arr(row['osas'])}")
-        logger.info(f"osa_logits: {bin_to_arr(row['osa_logits'])}")
-        logger.info(f"snorings: {bin_to_arr(row['snorings'])}")
-        logger.info(f"snoring_logits: {bin_to_arr(row['snoring_logits'])}")
-
-
-def migrate_preds(conn: pymysql.connect, type: str = "main"):
+def migrate_preds(conn: pymysql.connect, type: str):
     logger.info(f"migration of {type} has been started")
 
     raw_data = fetch_input_data(conn)
-    converted_data = convert_for_db_insertion(raw_data)
+    inserted_data = convert_for_db_insertion(raw_data)
 
-    save_model_prediction(conn, converted_data)
-    # fetch_model_prediction(conn)
+    save_model_prediction(conn, inserted_data)
 
     logger.info(f"migration of {type} has been completed")
 
@@ -158,8 +144,8 @@ def main():
 
     conn, test_conn = get_connections()
 
-    migrate_preds(test_conn)
-    # migrate_preds(conn)
+    migrate_preds(test_conn, "sleep_test")
+    migrate_preds(conn, "sleep")
 
 
 main()
