@@ -65,6 +65,7 @@ def fetch_input_data(conn: pymysql.connect) -> list[dict]:
         rows.extend(rows_by_page)
         time.sleep(1)
 
+    logger.info(f"input data has been fetched: {len(rows)} rows")
     return rows
 
 
@@ -118,13 +119,13 @@ def save_model_prediction_by_page(conn: pymysql.connect, data: list):
 
 
 def save_model_prediction(conn: pymysql.connect, data: list[tuple]):
-    batch_size, offset = 1000, 0
+    batch_size, offset = 2000, 0
 
     while offset < len(data):
         save_model_prediction_by_page(conn, data[offset : offset + batch_size])
         offset += batch_size
 
-    logger.info("model predictions has been saved")
+    logger.info(f"model predictions has been saved: {len(data)} rows")
 
 
 def migrate_preds(conn: pymysql.connect, type: str):
