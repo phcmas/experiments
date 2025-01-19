@@ -9,7 +9,7 @@ from sse_starlette.sse import EventSourceResponse
 from sse.backend.event import EventModel
 
 logger = logging.getLogger(__name__)
-origins = ["http://localhost", "http://localhost:3000", "http://127.0.0.1:3000"]
+origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
 
 connections: dict[str, asyncio.Queue] = {}
 
