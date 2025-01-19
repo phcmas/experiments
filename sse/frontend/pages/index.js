@@ -32,7 +32,8 @@ export default function Home() {
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    const sse = new EventSource("http://localhost:8000/stream", {
+    const session_id = Math.floor(Math.random() * 10)
+    const sse = new EventSource(`http://localhost:8000/stream/${session_id}`, {
       withCredentials: true,
     })
 
