@@ -2,15 +2,18 @@ import asyncio
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sse_starlette.sse import EventSourceResponse
+from fastapi.responses import StreamingResponse
 
-from sse.backend.event import EventModel, SSEEvent
+from sse.backend.event import EventModel
 
 logger = logging.getLogger(__name__)
-app = FastAPI()
 origins = ["http://localhost", "http://localhost:3000", "http://127.0.0.1:3000"]
 
+connections: dict[str, asyncio.Queue] = {}
+
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -25,25 +28,29 @@ async def health():
     return {"message": "hello world"}
 
 
-@app.post("/emit")
-async def new_event(event: EventModel):
-    SSEEvent.add_event(event)
-    return {"message": "event added", "count": SSEEvent.count()}
+@app.post("/send/{session_id}")
+async def send_event(session_id: str, event: EventModel):
+    if session_id in connections:
+        await connections[session_id].put(event)
+        return {"detail": "OK"}
+    else:
+        raise HTTPException(status_code=404, detail="client not connected")
 
 
-@app.get("/stream")
-async def stream(request: Request):
-    async def stream_generator():
-        while True:
-            if await request.is_disconnected():
-                logger.info("client disconnected")
-                break
+@app.get("/stream/{session_id}")
+async def stream(session_id: str, request: Request):
+    queue = asyncio.Queue()
+    connections[session_id] = queue
 
-            event = SSEEvent.get_event()
+    logger.info(f"client connected: {session_id}")
 
-            if event:
+    async def event_generator():
+        try:
+            while True:
+                event = await queue.get()
                 yield f"data: {event.model_dump_json()}"
+        except asyncio.CancelledError:
+            logger.info(f"client disconnected: {session_id}")
+            del connections[session_id]
 
-            await asyncio.sleep(1)
-
-    return EventSourceResponse(stream_generator())
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
