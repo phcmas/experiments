@@ -37,11 +37,11 @@ export default function Home() {
       withCredentials: true,
     })
 
+    console.log(`session_id: ${session_id}`)
+
     sse.onmessage = (event) => {
       const data = JSON.parse(event.data.replace("data: ", ""))
       setMessages((prev) => [...prev, data])
-
-      console.log(event.data)
     }
   }, [])
 

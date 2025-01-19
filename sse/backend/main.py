@@ -4,7 +4,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from sse_starlette.sse import EventSourceResponse
 
 from sse.backend.event import EventModel
 
@@ -53,4 +53,6 @@ async def stream(session_id: str, request: Request):
             logger.info(f"client disconnected: {session_id}")
             del connections[session_id]
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    return EventSourceResponse(event_generator())
+
+    # return StreamingResponse(event_generator(), media_type="text/event-stream")
