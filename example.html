@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array Display</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px; /* 배열 간 간격 설정 */
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .array {
+      display: flex;
+      align-items: center;
+    }
+
+    .array-title {
+      font-weight: bold;
+      margin-right: 10px;
+      color: #333;
+      white-space: nowrap; /* 제목 줄바꿈 방지 */
+    }
+
+    .array-items {
+      font-size: 16px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="array">
+      <div class="array-title">Array 1:</div>
+      <div class="array-items">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</div>
+    </div>
+
+    <div class="array">
+      <div class="array-title">Array 2:</div>
+      <div class="array-items">A, B, C, D, E, F, G, H, I, J</div>
+    </div>
+
+    <div class="array">
+      <div class="array-title">Array 3:</div>
+      <div class="array-items">X, Y, Z, W, P, Q, R, S, T, U</div>
+    </div>
+  </div>
+</body>
+</html>
