@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 
-from sse.backend.event import create_event_queue, remove_event_queue
+from sse.backend.event import create_event_queue, get_event, remove_event_queue
 from sse.backend.message_adapter import polling, stop_polling
 
 
@@ -39,18 +39,16 @@ async def health():
 
 @app.get("/stream/{session_id}")
 async def stream(session_id: str):
-    queue = asyncio.Queue()
-    create_event_queue(session_id, queue)
-
+    create_event_queue(session_id)
     logger.info(f"client connected: {session_id}")
 
-    async def event_generator():
+    async def send_event():
         try:
             while True:
-                event = await queue.get()
+                event = await get_event(session_id)
                 yield f"data: {event.model_dump_json()}"
         except asyncio.CancelledError:
             logger.info(f"client disconnected: {session_id}")
             remove_event_queue(session_id)
 
-    return EventSourceResponse(event_generator())
+    return EventSourceResponse(send_event())
