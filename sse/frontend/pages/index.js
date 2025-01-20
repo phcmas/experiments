@@ -1,29 +1,16 @@
 import { useState, useEffect } from "react"
+import { createSessionId } from "./util"
 
-const events = (type, message) => {
+function realtime_data(data) {
   let color = "gray"
-
-  switch (type) {
-    case "info":
-      color = "blue"
-      break
-    case "error":
-      color = "red"
-      break
-    case "success":
-      color = "green"
-      break
-    case "warning":
-      color = "yellow"
-      break
-  }
+  let message = `sleep_stages: ${JSON.stringify(data.sleep_stages)}, osas: ${JSON.stringify(data.osas)}, snoring: ${JSON.stringify(data.snorings)} `
 
   return (
     <div
       className={`p-4 mb-4 text-sm text-${color}-800 rounded-lg bg-${color}-50 dark:bg-gray-800 dark:text`}
     >
-      <span className="font-medium">{type}! </span>
-      {message}
+      <span className="font-medium"></span>
+      {`sleep_stages: ${JSON.stringify(data.sleep_stages)}, osas: ${JSON.stringify(data.osas)}, snoring: ${JSON.stringify(data.snorings)}`}
     </div>
   )
 }
@@ -32,7 +19,7 @@ export default function Home() {
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    const session_id = Math.floor(Math.random() * 10)
+    const session_id = createSessionId()
     const sse = new EventSource(`http://localhost:8000/stream/${session_id}`, {
       withCredentials: true,
     })
@@ -50,7 +37,7 @@ export default function Home() {
       <ul>
         {messages.length > 0 ? (
           messages.map((message, i) => {
-            return <li key={i}>{events(message.type, message.message)}</li>
+            return <li key={i}>{realtime_data(message)}</li>
           })
         ) : (
           <p>No messages</p>
