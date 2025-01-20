@@ -1,26 +1,28 @@
-from collections import deque
+import asyncio
 from pydantic import BaseModel
+
+events: dict[str, asyncio.Queue] = {}
 
 
 class EventModel(BaseModel):
-    type: str
-    message: str
+    session_id: str
+    sleep_stages: list[int]
+    osas: list[int]
+    snorings: list[int]
 
 
-class SSEEvent:
-    EVENTS = deque()
+def remove_event_queue(session_id: str):
+    global events
+    if session_id in events:
+        del events[session_id]
 
-    @staticmethod
-    def add_event(event: EventModel):
-        SSEEvent.EVENTS.append(event)
 
-    @staticmethod
-    def get_event():
-        if len(SSEEvent.EVENTS) > 0:
-            return SSEEvent.EVENTS.popleft()
+def create_event_queue(session_id: str, queue: asyncio.Queue):
+    global events
+    events[session_id] = queue
 
-        return None
 
-    @staticmethod
-    def count():
-        return len(SSEEvent.EVENTS)
+async def push_event(event: EventModel):
+    global events
+    if event.session_id in events:
+        await events[event.session_id].put(event)
