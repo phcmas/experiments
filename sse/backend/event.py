@@ -1,8 +1,6 @@
 import asyncio
 from pydantic import BaseModel
 
-events: dict[str, asyncio.Queue] = {}
-
 
 class EventModel(BaseModel):
     session_id: str
@@ -11,15 +9,23 @@ class EventModel(BaseModel):
     snorings: list[int]
 
 
+events: dict[str, asyncio.Queue] = {}
+
+
 def remove_event_queue(session_id: str):
     global events
     if session_id in events:
         del events[session_id]
 
 
-def create_event_queue(session_id: str, queue: asyncio.Queue):
+def create_event_queue(session_id: str):
     global events
-    events[session_id] = queue
+    events[session_id] = asyncio.Queue()
+
+
+async def get_event(session_id: str):
+    global events
+    return await events[session_id].get()
 
 
 async def push_event(event: EventModel):
