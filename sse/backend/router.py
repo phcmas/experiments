@@ -2,10 +2,12 @@ import asyncio
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 
 from sse.backend.event import create_event_queue, remove_event_queue
 from sse.backend.message_adapter import polling, stop_polling
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
@@ -19,7 +21,15 @@ async def lifespan(app: FastAPI):
     stop_polling()
 
 
+origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    middleware_class=CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
