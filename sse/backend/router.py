@@ -40,7 +40,6 @@ async def health():
 @app.get("/stream/{session_id}")
 async def stream(session_id: str):
     create_event_queue(session_id)
-    logger.info(f"client connected: {session_id}")
 
     async def send_event():
         try:
