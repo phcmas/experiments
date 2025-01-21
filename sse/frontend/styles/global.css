@@ -1,0 +1,63 @@
+.input-container {
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 7px; /* input과 버튼 사이의 간격 */
+}
+
+.input {
+  padding: 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 200px; /* 원하는 너비로 설정 */
+}
+
+.button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+.input + button {
+  margin-left: 10px; /* input과 버튼 사이 간격 */
+}
+
+.button + button {
+  margin-left: 10px; /* 두 버튼 사이 간격 */
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.status-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.sse-status {
+  font-size: 18px; /* 폰트 크기 */
+  font-weight: bold; /* 굵은 폰트 */
+  margin-left: 15px; /* 오른쪽 간격 */
+  color: black; /* 연결 상태 색상 */
+}
+
+.sse-disconnected {
+  font-size: 16px; /* 폰트 크기 */
+  font-weight: normal; /* 기본 폰트 굵기 */
+  margin-right: 10px; /* 오른쪽 간격 */
+  color: red; /* 연결 끊김 상태 색상 */
+}
