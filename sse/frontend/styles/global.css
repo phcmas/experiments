@@ -1,7 +1,19 @@
+.main-container {
+  position: relative;
+}
+
+main {
+  position: absolute;
+  top: 20px;
+  left: 30px;  /* 화면 오른쪽으로 20px 이동 */
+}
+
+
 .input-container {
   display: flex;
   align-items: center; /* 세로 중앙 정렬 */
-  gap: 7px; /* input과 버튼 사이의 간격 */
+  gap: 2px; /* input과 버튼 사이의 간격 */
+  margin-bottom: 40px; /* 아래쪽 간격 */
 }
 
 .input {
@@ -60,4 +72,35 @@
   font-weight: normal; /* 기본 폰트 굵기 */
   margin-right: 10px; /* 오른쪽 간격 */
   color: red; /* 연결 끊김 상태 색상 */
+}
+
+
+.array {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* 여러 줄로 감싸지도록 설정 */
+  gap: 20px; /* 항목 간의 간격을 주어 덜 촘촘하게 보이도록 */
+}
+
+.array-title {
+  display: inline;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+  color: black;
+}
+
+.array-items {
+  display: inline;
+  font-size: 18px;
+  margin-right: 20px; /* 항목들 간의 간격을 설정 */
+  color: #333;
+  word-break: break-word; /* 긴 텍스트가 있으면 줄바꿈 되도록 설정 */
+}
+
+/* 각 항목을 좀 더 구분 짓기 위한 스타일 */
+.container {
+  padding: 3px;
+  margin-bottom: 3px; /* 항목 간 여백 */
+  border-radius: 5px; /* 모서리를 둥글게 처리 */
 }
