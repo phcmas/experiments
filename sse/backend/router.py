@@ -45,6 +45,7 @@ async def stream(session_id: str):
         try:
             while True:
                 event = await get_event(session_id)
+                logger.info(f"sending event: {session_id}")
                 yield f"data: {event.model_dump_json()}"
         except asyncio.CancelledError:
             logger.info(f"client disconnected: {session_id}")

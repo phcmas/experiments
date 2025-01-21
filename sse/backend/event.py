@@ -20,7 +20,8 @@ def remove_event_queue(session_id: str):
 
 def create_event_queue(session_id: str):
     global events
-    events[session_id] = asyncio.Queue()
+    if session_id not in events:
+        events[session_id] = asyncio.Queue()
 
 
 async def get_event(session_id: str):
