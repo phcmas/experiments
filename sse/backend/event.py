@@ -1,9 +1,11 @@
 import asyncio
+
 from pydantic import BaseModel
 
 
 class EventModel(BaseModel):
     session_id: str
+    inference_seq: int
     sleep_stages: list[int]
     osas: list[int]
     snorings: list[int]
