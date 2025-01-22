@@ -16,13 +16,13 @@ async def lifespan(app: FastAPI):
     """read more about it in the fastapi docs for lifespan (https://fastapi.tiangolo.com/advanced/events/)"""
 
     load_environments()
-    await create_redis_connection()
+    create_redis_connection()
     await create_sqs_queue()
     asyncio.create_task(start_polling())
     yield
     stop_polling()
     await remove_sqs_queue()
-    await close_redis_connection()
+    close_redis_connection()
 
 
 origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]

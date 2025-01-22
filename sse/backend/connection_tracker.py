@@ -1,13 +1,12 @@
 import json
 import redis
 from sse.backend.environment import get_environments
-from sse.backend.message_consumer import queue_url
 
 
 connection = None
 
 
-async def create_redis_connection():
+def create_redis_connection():
     global connection
 
     env = get_environments()
@@ -24,22 +23,23 @@ async def create_redis_connection():
     connection = redis.Redis(connection_pool=connection_pool)
 
 
-async def close_redis_connection():
+def close_redis_connection():
     global connection
     connection.close()
 
 
-async def save_connection_state(session_id: str):
+def save_connection_state(session_id: str, queue_url: str):
     global connection
 
-    prev = json.loads(connection.get("CONNECTION"), {})
-    prev[session_id] = queue_url
+    prev_state = connection.get("SSE_CONNECTION")
+    cur_state = json.loads(prev_state) if prev_state else {}
+    cur_state[session_id] = queue_url
 
-    connection.set("CONNECTION", json.dumps(prev))
+    connection.set("SSE_CONNECTION", json.dumps(cur_state))
 
 
-async def get_connection_state(session_id: str):
+def get_connection_state(session_id: str):
     global connection
 
-    result = json.loads(connection.get("CONNECTION"), {})
-    return result.get(session_id)
+    cur_state = connection.get("SSE_CONNECTION")
+    return json.loads(cur_state).get(session_id) if cur_state else None

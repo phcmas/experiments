@@ -1,6 +1,8 @@
 import asyncio
 import logging
 
+from sse.backend.connection_tracker import save_connection_state
+from sse.backend.message_consumer import get_queue_url
 from sse_starlette.sse import EventSourceResponse
 
 from sse.backend.app import app
@@ -17,6 +19,7 @@ async def health():
 @app.get("/stream/{session_id}")
 async def stream(session_id: str):
     create_event_store(session_id)
+    save_connection_state(session_id, get_queue_url())
 
     async def send_event():
         try:

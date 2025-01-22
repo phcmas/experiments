@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 
 import aioboto3
 import nanoid
@@ -9,16 +8,24 @@ from sse.backend.environment import get_endpoint_url
 from sse.backend.event_store import EventModel, push_event
 
 logger = logging.getLogger(__name__)
-stop_event = asyncio.Event()
-endpoint_url = os.getenv("LOCALSTACK_ENDPOINT_URL")
+stop_requested = asyncio.Event()
+stop_completed = asyncio.Event()
 queue_url = None
 
 
 def stop_polling():
-    if stop_event.is_set():
+    if stop_requested.is_set():
         return
 
-    stop_event.set()
+    stop_requested.set()
+
+    while stop_completed.is_set():
+        break
+
+
+def get_queue_url():
+    global queue_url
+    return queue_url
 
 
 async def create_sqs_queue():
@@ -47,7 +54,11 @@ async def start_polling():
     session = aioboto3.Session()
 
     async with session.client("sqs", endpoint_url=get_endpoint_url()) as sqs:
-        while not stop_event.is_set():
+        while True:
+            if not stop_requested.is_set():
+                stop_completed.set()
+                break
+
             messages = await sqs.receive_message(QueueUrl=queue_url, MaxNumberOfMessages=1, WaitTimeSeconds=5)
 
             for message in messages.get("Messages", []):
