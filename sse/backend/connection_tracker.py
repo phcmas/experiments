@@ -1,7 +1,8 @@
 import json
-import redis
-from sse.backend.environment import get_environments
 
+import redis
+
+from sse.backend.environment import get_environments
 
 connection = None
 
@@ -27,7 +28,7 @@ def close_redis():
     connection.close()
 
 
-def save_sse_state(session_id: str, queue_url: str):
+def save_sse_connection(session_id: str, queue_url: str):
     global connection
 
     prev_sse = connection.get("SSE_CONNECTION")
@@ -35,10 +36,3 @@ def save_sse_state(session_id: str, queue_url: str):
     cur_sse[session_id] = queue_url
 
     connection.set("SSE_CONNECTION", json.dumps(cur_sse))
-
-
-def get_sse_state(session_id: str):
-    global connection
-
-    cur_sse = connection.get("SSE_CONNECTION")
-    return json.loads(cur_sse).get(session_id) if cur_sse else None

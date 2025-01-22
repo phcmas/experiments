@@ -26,14 +26,12 @@ async def lifespan(app: FastAPI):
     close_redis()
 
 
-origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
-
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
 app.add_middleware(
     middleware_class=CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_credentials=False,
 )
