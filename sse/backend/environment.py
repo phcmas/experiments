@@ -25,7 +25,7 @@ class Environment(BaseSettings):
         return value
 
 
-def load_environments():
+def init_environments():
     global env
 
     profile = os.getenv("PROFILE")

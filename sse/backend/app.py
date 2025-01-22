@@ -4,8 +4,8 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from sse.backend.connection_tracker import close_redis_connection, create_redis_connection
-from sse.backend.environment import load_environments
+from sse.backend.connection_tracker import close_redis, init_redis
+from sse.backend.environment import init_environments
 from sse.backend.message_consumer import create_sqs_queue, remove_sqs_queue, start_polling, stop_polling
 
 logger = logging.getLogger(__name__)
@@ -15,14 +15,14 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(mess
 async def lifespan(app: FastAPI):
     """read more about it in the fastapi docs for lifespan (https://fastapi.tiangolo.com/advanced/events/)"""
 
-    load_environments()
-    create_redis_connection()
+    init_environments()
+    init_redis()
     await create_sqs_queue()
     asyncio.create_task(start_polling())
     yield
     stop_polling()
     await remove_sqs_queue()
-    close_redis_connection()
+    close_redis()
 
 
 origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
