@@ -1,14 +1,14 @@
-import json
-
 import redis
+from redis.commands.json import JSON
 
 from sse.backend.environment import get_environments
 
-connection = None
+redis_client = None
+redis_json = None
 
 
 def init_redis():
-    global connection
+    global redis_client, redis_json
 
     env = get_environments()
     connection_pool = redis.ConnectionPool(
@@ -20,19 +20,26 @@ def init_redis():
         health_check_interval=60,
     )
 
-    connection = redis.Redis(connection_pool=connection_pool)
+    redis_client = redis.Redis(connection_pool=connection_pool)
+    redis_json = JSON(redis_client)
 
 
 def close_redis():
-    global connection
-    connection.close()
+    global redis_client
+    redis_client.close()
 
 
 def save_sse_connection(session_id: str, queue_url: str):
-    global connection
+    global redis_json
 
-    prev_sse = connection.get("SSE_CONNECTION")
-    cur_sse = json.loads(prev_sse) if prev_sse else {}
-    cur_sse[session_id] = queue_url
+    prev_sse = redis_json.get("SSE_CONNECTION")
 
-    connection.set("SSE_CONNECTION", json.dumps(cur_sse))
+    if prev_sse is None:
+        redis_json.set("SSE_CONNECTION", "$", {session_id: queue_url})
+    else:
+        redis_json.set("SSE_CONNECTION", f"$.{session_id}", queue_url)
+
+
+def remove_sse_connection(session_id: str):
+    global redis_json
+    redis_json.delete("SSE_CONNECTION", f"$.{session_id}")

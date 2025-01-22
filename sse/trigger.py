@@ -8,9 +8,11 @@ import random
 import aioboto3
 import redis
 from dotenv import dotenv_values
+from redis.commands.json import JSON
 
 env = None
-connection = None
+redis_client = None
+redis_json = None
 
 
 logger = logging.getLogger(__name__)
@@ -32,9 +34,10 @@ def init_envirnoment():
 
 
 def init_redis():
-    global connection
+    global redis_client, redis_json
     connection_pool = redis.ConnectionPool(host=env["REDIS_HOST"], port=env["REDIS_PORT"], db=0, max_connections=1)
-    connection = redis.Redis(connection_pool=connection_pool)
+    redis_client = redis.Redis(connection_pool=connection_pool)
+    redis_json = JSON(redis_client)
 
 
 def create_random_message(session_id: str):
@@ -57,11 +60,10 @@ async def send_event(boto3_session, session_id, queue_url):
 
 
 async def send_events():
-    raw_data = connection.get("SSE_CONNECTION")
-    cur_sse = json.loads(raw_data) if raw_data is not None else {}
+    cur_sse = redis_json.get("SSE_CONNECTION", "$")
     boto3_session = aioboto3.Session()
 
-    for session_id, queue_url in cur_sse.items():
+    for session_id, queue_url in cur_sse[0].items():
         await send_event(boto3_session, session_id, queue_url)
 
 

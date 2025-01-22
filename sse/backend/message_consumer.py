@@ -31,7 +31,7 @@ def get_queue_url():
 async def create_sqs_queue():
     global queue_url
     session = aioboto3.Session()
-    suffix = nanoid.generate(size=10)
+    suffix = nanoid.generate(alphabet="abcdefghijklmnopqrstuvwxyz", size=10)
 
     async with session.client("sqs", endpoint_url=get_endpoint_url()) as sqs:
         response = await sqs.create_queue(
