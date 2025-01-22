@@ -39,6 +39,7 @@ async def create_sqs_queue():
             Attributes={"DelaySeconds": "0", "MessageRetentionPeriod": "86400", "VisibilityTimeout": "30"},
         )
 
+        logger.info(f"created queue: {response['QueueUrl']}")
         queue_url = response["QueueUrl"]
 
 

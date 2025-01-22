@@ -13,8 +13,6 @@ class Environment(BaseSettings):
 
     REDIS_HOST: str
     REDIS_PORT: int
-    REDIS_MAX_CONNECTION_POOL_SIZE: int
-
     LOCALSTACK_ENDPOINT_URL: str | None = None
 
     @field_validator("LOCALSTACK_ENDPOINT_URL")

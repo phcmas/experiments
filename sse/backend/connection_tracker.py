@@ -14,7 +14,7 @@ def init_redis():
         host=env.REDIS_HOST,
         port=env.REDIS_PORT,
         db=0,
-        max_connections=env.REDIS_MAX_CONNECTION_POOL_SIZE,
+        max_connections=1,
         socket_timeout=3,
         health_check_interval=60,
     )
