@@ -29,7 +29,7 @@ def create_event_store(session_id: str):
     global event_store
 
     if session_id in event_store:
-        raise HTTPException(status_code=400, detail="Event store already exists")
+        raise HTTPException(status_code=400, detail="event store already exists")
 
     if session_id not in event_store:
         event_store[session_id] = asyncio.Queue()

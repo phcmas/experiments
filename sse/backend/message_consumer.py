@@ -56,7 +56,7 @@ async def start_polling():
 
     async with session.client("sqs", endpoint_url=get_endpoint_url()) as sqs:
         while True:
-            if not stop_requested.is_set():
+            if stop_requested.is_set():
                 stop_completed.set()
                 break
 
