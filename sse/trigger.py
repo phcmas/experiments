@@ -1,8 +1,9 @@
 import asyncio
 import json
+import logging
 import os
 from pathlib import Path
-from random import random
+import random
 
 import aioboto3
 import redis
@@ -10,6 +11,10 @@ from dotenv import dotenv_values
 
 env = None
 connection = None
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 def init_envirnoment():
@@ -32,25 +37,28 @@ def init_redis():
     connection = redis.Redis(connection_pool=connection_pool)
 
 
-async def send_event(boto3_session, session_id, queue_url):
-    message = {
+def create_random_message(session_id: str):
+    return {
         "session_id": session_id,
         "inference_seq": random.randint(0, 10),
-        "sleep_stage": [random.randint(0, 2) for _ in range(10)],
+        "sleep_stages": [random.randint(0, 2) for _ in range(10)],
         "osas": [random.randint(0, 1) for _ in range(10)],
         "snorings": [random.randint(0, 1) for _ in range(10)],
     }
 
+
+async def send_event(boto3_session, session_id, queue_url):
+    messages = [create_random_message(session_id) for _ in range(random.randint(1, 3))]
+
     async with boto3_session.client("sqs", endpoint_url=env["LOCALSTACK_ENDPOINT_URL"]) as sqs:
-        await sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(message))
+        for message in messages:
+            await sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(message))
+            logger.info(f"sent message, session_id: {session_id}")
 
 
 async def send_events():
-    cur_sse = connection.get("SSE_CONNECTION")
-
-    if cur_sse is None:
-        return
-
+    raw_data = connection.get("SSE_CONNECTION")
+    cur_sse = json.loads(raw_data) if raw_data is not None else {}
     boto3_session = aioboto3.Session()
 
     for session_id, queue_url in cur_sse.items():
