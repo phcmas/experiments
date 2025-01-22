@@ -35,10 +35,10 @@ def init_redis():
 async def send_event(boto3_session, session_id, queue_url):
     message = {
         "session_id": session_id,
-        "inference_seq": random.randint(1, 10),
-        "sleep_stage": [0, 0, 1, 1, 0, 1, 1, 1, 1],
-        "osas": [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        "snorings": [0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+        "inference_seq": random.randint(0, 10),
+        "sleep_stage": [random.randint(0, 2) for _ in range(10)],
+        "osas": [random.randint(0, 1) for _ in range(10)],
+        "snorings": [random.randint(0, 1) for _ in range(10)],
     }
 
     async with boto3_session.client("sqs", endpoint_url=env["LOCALSTACK_ENDPOINT_URL"]) as sqs:

@@ -1,22 +1,23 @@
 import asyncio
 import logging
 
-from sse.backend.connection_tracker import save_sse_state
-from sse.backend.message_consumer import get_queue_url
+from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
 
-from sse.backend.app import app
+from sse.backend.connection_tracker import save_sse_state
 from sse.backend.event_store import create_event_store, get_event, remove_event_store
+from sse.backend.message_consumer import get_queue_url
 
 logger = logging.getLogger(__name__)
+router = APIRouter(tags=["sse"])
 
 
-@app.get("/")
+@router.get("/")
 async def health():
     return {"message": "hello world"}
 
 
-@app.get("/stream/{session_id}")
+@router.get("/v1/stream/{session_id}")
 async def stream(session_id: str):
     create_event_store(session_id)
     save_sse_state(session_id, get_queue_url())

@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sse.backend.connection_tracker import close_redis, init_redis
 from sse.backend.environment import init_environments
 from sse.backend.message_consumer import create_sqs_queue, remove_sqs_queue, start_polling, stop_polling
+from sse.backend.router import router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI):
 origins = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(router)
 app.add_middleware(
     middleware_class=CORSMiddleware,
     allow_origins=origins,
