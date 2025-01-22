@@ -9,7 +9,7 @@ const useStartSSE = (sessionId, sse, setSse, setPredictions) => {
       return
     }
 
-    const eventSource = new EventSource(`http://localhost:8000/stream/${sessionId}`, { withCredentials: true })
+    const eventSource = new EventSource(`http://localhost:8000/v1/stream/${sessionId}`)
 
     eventSource.onmessage = (event) => {
       const raw_data = JSON.parse(event.data.replace("data: ", ""))
