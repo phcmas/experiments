@@ -1,4 +1,5 @@
 import { useCallback } from "react"
+import getConfig from "next/config"
 
 const useStartSSE = (sessionId, sse, setSse, setPredictions) => {
   const startSSE = useCallback(() => {
@@ -9,7 +10,8 @@ const useStartSSE = (sessionId, sse, setSse, setPredictions) => {
       return
     }
 
-    const eventSource = new EventSource(`http://localhost:8000/v1/stream/${sessionId}`)
+    const { publicRuntimeConfig } = getConfig()
+    const eventSource = new EventSource(`${publicRuntimeConfig.NEXT_PUBLIC_API_URL}/v1/stream/${sessionId}`)
 
     eventSource.onmessage = (event) => {
       const raw_data = JSON.parse(event.data.replace("data: ", ""))
