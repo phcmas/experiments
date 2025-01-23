@@ -2,8 +2,8 @@ import asyncio
 import json
 import logging
 import os
-from pathlib import Path
 import random
+from pathlib import Path
 
 import aioboto3
 import redis
@@ -50,21 +50,17 @@ def create_random_message(session_id: str):
     }
 
 
-async def send_event(boto3_session, session_id, queue_url):
-    messages = [create_random_message(session_id) for _ in range(random.randint(1, 3))]
-
-    async with boto3_session.client("sqs", endpoint_url=env["LOCALSTACK_ENDPOINT_URL"]) as sqs:
-        for message in messages:
-            await sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(message))
-            logger.info(f"sent message, session_id: {session_id}")
-
-
 async def send_events():
     cur_sse = redis_json.get("SSE_CONNECTION", "$")
     boto3_session = aioboto3.Session()
 
     for session_id, queue_url in cur_sse[0].items():
-        await send_event(boto3_session, session_id, queue_url)
+        messages = [create_random_message(session_id) for _ in range(random.randint(1, 3))]
+
+        async with boto3_session.client("sqs", endpoint_url=env["LOCALSTACK_ENDPOINT_URL"]) as sqs:
+            for message in messages:
+                await sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(message))
+                logger.info(f"sent message, session_id: {session_id}")
 
 
 async def trigger():
