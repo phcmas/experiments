@@ -41,7 +41,7 @@ def create_random_message(session_id: str):
     return {
         "session_id": session_id,
         "inference_seq": random.randint(0, 10),
-        "sleep_stages": [random.randint(0, 2) for _ in range(10)],
+        "sleep_stages": [random.randint(0, 1) for _ in range(10)],
         "osas": [random.randint(0, 1) for _ in range(10)],
         "snorings": [random.randint(0, 1) for _ in range(10)],
     }

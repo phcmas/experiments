@@ -1,22 +1,11 @@
 const Prediction = ({ prediction }) => {
-  return (
-    <li>
-      <div className={`p-4 mb-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text`}>
-        <span className="font-medium"></span>
-        {`sleep_stages: ${JSON.stringify(prediction.sleep_stages)}, osas: ${JSON.stringify(prediction.osas)}, snorings: ${JSON.stringify(prediction.snorings)}`}
-      </div>
-    </li>
-  )
-}
-
-const RealtimePrediction = ({ prediction }) => {
-  const { seq, sleepStages, osas, snorings } = prediction
+  const { seq, sleepStages, osas, snorings, arrivedAt } = prediction
 
   return (
     <li>
       <div class="container">
-        <div class="array-title">seq:</div>
-        <div class="array-items">{seq}</div>
+        <div class="array-title">arrived_at:</div>
+        <div class="array-items">{arrivedAt.split(" ")[1]}</div>
 
         <div class="array-title">sleep_stages:</div>
         <div class="array-items">{JSON.stringify(sleepStages)}</div>
@@ -38,7 +27,7 @@ const Predictions = ({ predictions }) => {
     <div>
       <ul>
         {predictions.map((prediction, idx) => (
-          <RealtimePrediction key={idx} prediction={prediction} />
+          <Prediction key={idx} prediction={prediction} />
         ))}
       </ul>
     </div>
