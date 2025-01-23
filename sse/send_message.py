@@ -76,7 +76,7 @@ async def broadcast():
             await send_event(boto3_session, session_id, queue_url, messages)
 
 
-async def trigger():
+async def send_message():
     init_envirnoment()
     init_redis()
 
@@ -88,4 +88,4 @@ async def trigger():
 
 
 if __name__ == "__main__":
-    asyncio.run(trigger())
+    asyncio.run(send_message())
