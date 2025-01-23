@@ -2,8 +2,8 @@ import asyncio
 import json
 import logging
 import os
-from pathlib import Path
 import random
+from pathlib import Path
 
 import aioboto3
 import redis
