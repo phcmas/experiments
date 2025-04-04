@@ -1,5 +1,7 @@
 import logging
 
+from redis.exceptions import RedisError
+
 from config import create_redis_connection, get_redis_connection, init_logging
 
 init_logging()
@@ -12,7 +14,7 @@ def publish_message(channel, message):
     try:
         redis.publish(channel, message)
         logger.info(f"published message: {message} to channel: {channel}")
-    except Exception as e:
+    except RedisError as e:
         logger.error(f"failed to publish message: {e}")
 
 

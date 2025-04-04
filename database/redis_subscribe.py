@@ -1,8 +1,8 @@
 import logging
 import time
 
-from redis.exceptions import RedisError
 from redis.client import PubSub
+from redis.exceptions import RedisError
 
 from config import create_redis_connection, get_redis_connection, init_logging
 
@@ -19,7 +19,7 @@ def unsubscribe_from_channel(pubsub: PubSub | None, channel: str):
     try:
         pubsub.unsubscribe(channel)
         pubsub.close()
-    except Exception as e:
+    except RedisError as e:
         logger.warning(f"failed to unsubscribe from channel: {e}")
 
 
@@ -27,6 +27,8 @@ def listen_to_channel(channel: str):
     try:
         pubsub = redis.pubsub()
         pubsub.subscribe(channel)
+
+        logger.info(f"subscribe to channel: {channel}")
 
         for message in pubsub.listen():
             if message["type"] != "message":
@@ -40,15 +42,9 @@ def listen_to_channel(channel: str):
         logger.error(f"error: {e}")
     finally:
         unsubscribe_from_channel(pubsub, channel)
-        time.sleep(1)
-
-
-def subscribe_to_channel(channel):
-    logger.info(f"subscribe to channel: {channel}")
-
-    while True:
-        listen_to_channel(channel)
+        time.sleep(5)
 
 
 if __name__ == "__main__":
-    subscribe_to_channel("test_channel")
+    while True:
+        listen_to_channel("test_channel")
