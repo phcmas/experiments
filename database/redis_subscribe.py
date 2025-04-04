@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -34,7 +35,7 @@ def listen_to_channel(channel: str):
             if message["type"] != "message":
                 continue
 
-            logger.info(f"received message: {message['data'].decode('utf-8')}")
+            logger.info(f"received message: {json.loads(message['data'])}")
 
     except RedisError as e:
         logger.error(f"redis error: {e}")
