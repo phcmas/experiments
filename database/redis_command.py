@@ -1,13 +1,14 @@
-from config import load_environments, logger
+import logging
 
-# noqa
-from redis import Redis  # type: ignore
+from config import create_redis_connection, get_redis_connection
 
-settings = load_environments()
-redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+logger = logging.getLogger(__name__)
+
+create_redis_connection()
+redis = get_redis_connection()
 
 
-def main():
+def set_command():
     session_id = "20240617081708_pka5f"
     redis.sadd(session_id, 1)
     redis.sadd(session_id, 2)
@@ -19,4 +20,12 @@ def main():
     logger.info(result)
 
 
-main()
+def decode_response():
+    redis.set("foo", "bar")
+    result = redis.get("foo")
+
+    logger.info(result)
+
+
+if __name__ == "__main__":
+    decode_response()

@@ -1,5 +1,8 @@
-from config.env_config import get_environments
 import redis
+
+from config.env_config import get_environments, load_environments
+
+load_environments()
 
 connection = None
 
@@ -15,6 +18,7 @@ def create_redis_connection() -> redis.Redis:
         max_connections=env.REDIS_MAX_CONNECTION_POOL_SIZE,
         socket_timeout=3,
         health_check_interval=60,
+        decode_responses=True,
     )
 
     connection = redis.Redis(connection_pool=connection_pool)

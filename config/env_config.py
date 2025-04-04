@@ -1,12 +1,12 @@
+import logging
 import os
 from typing import Optional
 
 from dotenv import dotenv_values
 from pydantic_settings import BaseSettings
 
-from config.logging_config import logger
-
 env = None
+logger = logging.getLogger(__name__)
 
 
 class Environments(BaseSettings):
