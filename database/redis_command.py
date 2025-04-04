@@ -1,11 +1,12 @@
 import logging
 
-from config import create_redis_connection, get_redis_connection
+from config import create_redis_connection, get_redis_connection, init_logging
 
-logger = logging.getLogger(__name__)
-
+init_logging()
 create_redis_connection()
+
 redis = get_redis_connection()
+logger = logging.getLogger(__name__)
 
 
 def set_command():
@@ -23,6 +24,8 @@ def set_command():
 def decode_response():
     redis.set("foo", "bar")
     result = redis.get("foo")
+
+    logger.info(msg="asdf")
 
     logger.info(result)
 
