@@ -1,8 +1,21 @@
-from config.redis_config import create_redis_connection, get_redis_connection
+import logging
+
+from config import create_redis_connection, get_redis_connection, init_logging
+
+init_logging()
+create_redis_connection()
+redis = get_redis_connection()
+logger = logging.getLogger(__name__)
+
+
+def publish_message(channel, message):
+    try:
+        redis.publish(channel, message)
+        logger.info(f"published message: {message} to channel: {channel}")
+    except Exception as e:
+        logger.error(f"failed to publish message: {e}")
 
 
 if __name__ == "__main__":
-    create_redis_connection()
-    redis = get_redis_connection()
-
-    channel = "test_channel"
+    message = "Hello, Redis"
+    publish_message("test_channel", message)

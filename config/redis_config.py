@@ -2,13 +2,13 @@ import redis
 
 from config.env_config import get_environments, load_environments
 
-load_environments()
-
 connection = None
 
 
 def create_redis_connection() -> redis.Redis:
     global connection
+
+    load_environments()
     env = get_environments()
 
     connection_pool = redis.ConnectionPool(
@@ -16,7 +16,6 @@ def create_redis_connection() -> redis.Redis:
         port=env.REDIS_PORT,
         db=0,
         max_connections=env.REDIS_MAX_CONNECTION_POOL_SIZE,
-        socket_timeout=3,
         health_check_interval=60,
         decode_responses=True,
     )
