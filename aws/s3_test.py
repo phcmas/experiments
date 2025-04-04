@@ -13,7 +13,7 @@ from config import load_environments, logger
 settings = load_environments()
 
 boto3.setup_default_session(profile_name=settings.AWS_PROFILE)
-s3_client = boto3.client("s3", region_name=settings.AWS_REGION, endpoint_url=settings.ENDPOINT_URL)
+s3_client = boto3.client("s3", region_name=settings.AWS_REGION, endpoint_url=settings.LOCALSTACK_ENDPOINT_URL)
 keys = [
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/530_mel",
     "G-20240610233246-FLlfiIBmhnsMxCjroRWy/20240613030859_6xxrb/531_mel",

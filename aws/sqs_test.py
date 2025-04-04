@@ -12,7 +12,7 @@ sqs_session = boto3.session.Session()
 sqs_client = sqs_session.client(
     service_name="sqs",
     region_name=settings.AWS_REGION,
-    endpoint_url=settings.ENDPOINT_URL,
+    endpoint_url=settings.LOCALSTACK_ENDPOINT_URL,
 )
 
 
@@ -42,7 +42,7 @@ def receive_message(sqs_url: str):
 
 def main():
     logger.info("sqs message sended")
-    sqs_url = settings.SQS_URL
+    sqs_url = settings.SQS_INFERENCE_URL
     payload = {"hello": 1}
 
     send_message(sqs_url, payload)

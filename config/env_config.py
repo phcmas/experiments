@@ -15,11 +15,10 @@ class Environments(BaseSettings):
 
     AWS_REGION: str
     AWS_PROFILE: str
-    ENDPOINT_URL: Optional[str] = None
-    SQS_URL: Optional[str]
+    LOCALSTACK_ENDPOINT_URL: Optional[str] = None
+    SQS_INFERENCE_URL: Optional[str]
     UPLOAD_API_BASE_URL: Optional[str]
     MEL_FILE_DIR: Optional[str]
-    AI_MODEL_DIR: Optional[str]
     DATADOG_API_KEY: Optional[str]
     DATADOG_APP_KEY: Optional[str]
     REDIS_HOST: Optional[str]
