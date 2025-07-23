@@ -1,14 +1,17 @@
 import json
+import logging
 import pickle
 from datetime import datetime
 from typing import List
 
+from config.env_config import get_environments
 import pytz
 import requests
 
-from config import load_environments, logger
+from config import load_environments
 
-settings = load_environments()
+
+logger = logging.getLogger(__name__)
 
 
 def extract_year_month_day(date: datetime):
@@ -16,11 +19,12 @@ def extract_year_month_day(date: datetime):
 
 
 def call_datadog_logs_api(query: dict, index: int):
+    env = get_environments()
     url = "https://api.datadoghq.com/api/v2/logs/events/search"
     headers = {
         "Content-Type": "application/json",
-        "DD-API-KEY": settings.DATADOG_API_KEY,
-        "DD-APPLICATION-KEY": settings.DATADOG_APP_KEY,
+        "DD-API-KEY": env.DATADOG_API_KEY,
+        "DD-APPLICATION-KEY": env.DATADOG_APP_KEY,
     }
 
     try:
@@ -38,7 +42,11 @@ def call_datadog_logs_api(query: dict, index: int):
 
 def get_datadog_logs(started_at: datetime, ended_at: datetime):
     query = {
-        "filter": {"from": f"{started_at.isoformat()}", "to": f"{ended_at.isoformat()}", "query": "PERFORMANCE"},
+        "filter": {
+            "from": f"{started_at.isoformat()}",
+            "to": f"{ended_at.isoformat()}",
+            "query": "service:an2-live-sleep-ai-event-notifier SESSION_COMPLETE finished",
+        },
         "page": {"cursor": None, "limit": 5000},
         "sort": "@pageViews",
     }
@@ -68,10 +76,11 @@ def write_file(started_at: datetime, result: List[dict]):
 
 
 def main():
-    started_at0 = get_datetime(2024, 6, 28, 5, 0, 0)
-    ended_at0 = get_datetime(2024, 6, 28, 8, 0, 0)
+    started_at0 = get_datetime(2025, 7, 21, 9, 0, 0)
+    ended_at0 = get_datetime(2025, 7, 22, 9, 0, 0)
     result0 = get_datadog_logs(started_at0, ended_at0)
     write_file(started_at0, result0)
 
 
+load_environments()
 main()
